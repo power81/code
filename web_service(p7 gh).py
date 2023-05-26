@@ -3,14 +3,12 @@ web service.'''
 
 #web_service2.py
 
-from flask import Flask, jsonify
-
+from flask import Flask, jsonify, request
 app = Flask(__name__)
-
-@app.route('/api/hello', methods=['GET'])
-def hello():
-    return jsonify(message='Hello, World!')
-
+@app.route('/api/service', methods=['GET'])
+def service():
+    message = request.args.get('message')
+    return jsonify(message = f'Your name is {message}')
 if __name__ == '__main__':
     app.run(debug=True)
 
@@ -19,29 +17,10 @@ if __name__ == '__main__':
 
 #distributed_application2.py
 import requests
-import multiprocessing
-import os
-
-def consume_web_service(app_id):
-    url = f'http://127.0.0.1:5000/api/hello?app_id={app_id}'
-
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        message = data['message']
-        print(f'Response from App ID {app_id}:', message)
-    else:
-        print(f'Failed to fetch data from the web service for App ID {app_id}')
-
+def consume_web_service(message):
+    response = requests.get(f'http://127.0.0.1:5000/api/service?message={message}')
+    print(response.json()['message'])
 if __name__ == '__main__':
-    num_instances = 5  # Number of distributed application instances to run
-
-    processes = []
-    for i in range(num_instances):
-        process = multiprocessing.Process(target=consume_web_service, args=(i,))
-        process.start()
-        processes.append(process)
-
-    for process in processes:
-        process.join()
+    message = 'sample'
+    consume_web_service(message)
  
