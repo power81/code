@@ -44,3 +44,13 @@ if __name__ == '__main__':
 
     for process in processes:
         process.join()
+        
+        
+ %distributed application short code%
+ #short.py
+import requests
+def consume_web_service(app_id):
+    response = requests.get('http://127.0.0.1:5000/api/hello?app_id=1')
+    print( response.json()['message'])
+if __name__ == '__main__':
+    consume_web_service(1)
